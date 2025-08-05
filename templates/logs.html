@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SpyShield Logs</title>
+    <style>
+        body {
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1, h2 {
+            margin-top: 30px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 90%;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #00ffcc;
+            background-color: #222;
+        }
+        th {
+            background-color: #00ffcc;
+            color: black;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px;
+        }
+        .gallery img {
+            width: 200px;
+            height: auto;
+            border: 2px solid #00ffcc;
+        }
+        canvas {
+            margin-top: 40px;
+            background: white;
+            border-radius: 10px;
+        }
+        a {
+            color: #00ffcc;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📋 SpyShield Intruder Logs</h1>
+
+    <table>
+        {% for row in logs %}
+        <tr>
+            {% for col in row %}
+            <td>{{ col }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>📈 Face Detection Over Time</h2>
+    <canvas id="faceChart" width="800" height="300"></canvas>
+
+    <h2>📸 Intruder Screenshots</h2>
+    <div class="gallery">
+        {% for image in screenshots %}
+        <img src="{{ '/' + image }}" alt="Intruder Screenshot">
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('index') }}">🔙 Back to Home</a>
+    <a href="{{ url_for('download_logs') }}">⬇️ Download Logs CSV</a>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartData = {{ chart | safe }};
+        const ctx = document.getElementById('faceChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Detected Faces',
+                    data: chartData.counts,
+                    borderColor: '#00ffcc',
+                    backgroundColor: 'rgba(0, 255, 204, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: { color: '#00ffcc' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#00ffcc' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#00ffcc'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
